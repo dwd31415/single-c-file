@@ -4,6 +4,7 @@ int main()
 	printf("Hi");
 }	
 
+#include "test1.h"
 float pi()
 {
 	return 3.1415f;

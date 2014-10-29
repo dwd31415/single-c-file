@@ -5,9 +5,25 @@ function addFile(fileContent)
 {
   for(lineNr in fileContent)
   {
-      if(fileContent[lineNr].substring(0,2) != "//")
+      if(fileContent[lineNr].substring(0,2) != "//" && fileContent[lineNr].substring(0,10) != "#include \"" && fileContent[lineNr].substring(0,10) != "#include\"" )
       {
         newFile.push(fileContent[lineNr]);
+      }
+      if(fileContent[lineNr].substring(0,10) == "#include \"" || fileContent[lineNr].substring(0,10) == "#include\"")
+      {
+        var tmpFileName = fileContent[lineNr].replace("#include \"","");
+        try
+        {
+          tmpFileName = tmpFileName.replace("\"","");
+          var array = fs.readFileSync(tmpFileName).toString().split("\n");
+          if(array)
+          {
+            addFile(array);
+          }
+        }
+        catch(err){
+          newFile.push(fileContent[lineNr]);
+        }
       }
   }
 }
