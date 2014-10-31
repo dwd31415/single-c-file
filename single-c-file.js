@@ -1,6 +1,7 @@
 var fs = require('fs');
 var newFile = ['//This file was created with Single-C-File','//Single-C-File was developed by Adrian Dawid.'];
 var headers = [];
+var dontImportHeaders = false;
 
 function addFile(fileContent)
 {
@@ -9,9 +10,7 @@ function addFile(fileContent)
   {
     if(fileContent[lineNr])
     {
-      if(fileContent[lineNr].substring(0,2) != "//"  && fileContent[lineNr].substring(0,8) != "#include"
-         && fileContent[lineNr].substring(0,6) != "#ifdef" && fileContent[lineNr].substring(0,7) != "#ifndef" && fileContent[lineNr].substring(0,7) != "#define"
-         && fileContent[lineNr].substring(0,6) != "#endif" && readerActive)
+      if(fileContent[lineNr].substring(0,2) != "//"  && fileContent[lineNr].substring(0,8) != "#include")
       {
         newFile.push(fileContent[lineNr]);
       }
@@ -31,10 +30,14 @@ function addFile(fileContent)
         }
         try
         {
-          var array = fs.readFileSync(tmpFileName).toString().split("\n");
-          if(array && headerIsNew)
+          if(headerIsNew && !dontImportHeaders)
           {
+            var array = fs.readFileSync(tmpFileName).toString().split("\n");
             addFile(array);
+          }
+          if(dontImportHeaders)
+          {
+              newFile.push(fileContent[lineNr]);
           }
         }
         catch(err){
@@ -75,6 +78,13 @@ function main()
   var fileName = "none";
   console.log("Single-C-File by Adrian Dawid. \nCopyright 2014 Adrian Dawid. \nThis software is licensed under the MIT-License!");
   fileName = process.argv[2];
+  if(process.argv[3])
+  {
+    if(process.argv[3] == "dontImportHeaders" || process.argv[3] == "-dontImportHeaders")
+    {
+      dontImportHeaders = true;
+    }
+  }
   //Was there an argument?
   if(!fileName)
   {
