@@ -1,28 +1,38 @@
 var fs = require('fs');
-var newFile = ['//This file was created with Single-C-File by Adrian Dawid.'];
-var macros = ['PARSER_IS_SINGLE_C_FILE'];
+var newFile = ['//This file was created with Single-C-File','//Single-C-File was developed by Adrian Dawid.'];
+var headers = [];
 
 function addFile(fileContent)
 {
   var readerActive = true;
   for(lineNr in fileContent)
   {
-    if(fileContent.length < lineNr + 2)
+    if(fileContent[lineNr])
     {
-      if(fileContent[lineNr].substring(0,2) != "//" && fileContent[lineNr].substring(0,10) != "#include \"" && fileContent[lineNr].substring(0,9) != "#include\""
+      if(fileContent[lineNr].substring(0,2) != "//"  && fileContent[lineNr].substring(0,8) != "#include"
          && fileContent[lineNr].substring(0,6) != "#ifdef" && fileContent[lineNr].substring(0,7) != "#ifndef" && fileContent[lineNr].substring(0,7) != "#define"
          && fileContent[lineNr].substring(0,6) != "#endif" && readerActive)
       {
         newFile.push(fileContent[lineNr]);
       }
-      if(fileContent[lineNr].substring(0,10) == "#include \"" || fileContent[lineNr].substring(0,10) == "#include\"")
+      if(fileContent[lineNr].substring(0,8) == "#include")
       {
-        var tmpFileName = fileContent[lineNr].replace("#include \"","");
+        var tmpFileName = fileContent[lineNr].replace("#include","");
+        tmpFileName = tmpFileName.replace(" ","");
+        tmpFileName = tmpFileName.replace("\"","");
+        tmpFileName = tmpFileName.replace("\"","");
+        var headerIsNew = true;
+        for (index in headers)
+        {
+            if(headers[index] == tmpFileName)
+            {
+                headerIsNew = false;
+            }
+        }
         try
         {
-          tmpFileName = tmpFileName.replace("\"","");
           var array = fs.readFileSync(tmpFileName).toString().split("\n");
-          if(array)
+          if(array && headerIsNew)
           {
             addFile(array);
           }
@@ -30,62 +40,10 @@ function addFile(fileContent)
         catch(err){
           newFile.push(fileContent[lineNr]);
         }
-      }
-      console.log(fileContent[lineNr]);
-      if(fileContent[lineNr].substring(0,6) == "#ifdef")
-      {
-        var macro = fileContent[lineNr].replace("#ifdef","");
-        macro = macro.replace(" ","");
-        var macroWasFound = false;
-        for(index in macros)
+        if(headerIsNew)
         {
-            if(macros[index] == macro)
-            {
-              macroWasFound = true;
-            }
+              headers.push(tmpFileName);
         }
-        if(!macroWasFound)
-        {
-              readerActive = false;
-        }
-      }
-      if(fileContent[lineNr].substring(0,7) == "#ifndef")
-      {
-        var macro = fileContent[lineNr].replace("#ifndef","");
-        macro = macro.replace(" ","");
-        var macroWasFound = false;
-        for(index in macros)
-        {
-            if(macros[index] == macro)
-            {
-              macroWasFound = true;
-            }
-        }
-        if(macroWasFound)
-        {
-              readerActive = false;
-        }
-        else{
-          newFile.push(fileContent[lineNr]);
-        }
-      }
-      if(fileContent[lineNr].substring(0,7) == "#define")
-      {
-        var macro = fileContent[lineNr].replace("#define","");
-        macro = macro.replace(" ","");
-        macros.push(macro);
-        if(readerActive)
-        {
-            newFile.push(fileContent[lineNr]);
-        }
-      }
-      if(fileContent[lineNr].substring(0,6) == "#endif")
-      {
-        if(readerActive)
-        {
-            newFile.push(fileContent[lineNr]);
-        }
-        readerActive = true;
       }
     }
   }
