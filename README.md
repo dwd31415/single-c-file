@@ -4,25 +4,33 @@ Single-C-File
 Single-C-File was built to merge large numbers of c or c++ source code files into one single .cxx file.
 This is usefull for various reasons:
 * To use the .cxx file as a replacement for cross platform libraries
-* To slim down then build process
+* To slim down the build process
 * To make sharing code easier
 
 Features
 ========
-what can you do with Single-C-File?
+What can you do with Single-C-File?
 * Merge C/C++ files(Obviously)
-* Integrate all headers into the file(except you don't want that)
-* Organize the file with the build in header tracking system
+* Integrate all headers into one file(except you don't want that)
+* Merge efficently with the build in header tracking system
 
-How cam Single-C-File be used?
+Where can Single-C-File be used?
 * On Standalone machines using Node.js
-* Integrated into cloud build system(using Node.js)
-* Actually on any platform where Node.js runs.
+* On cloud build systems(using Node.js)
+* On the web(it is JavaScript)
+* Actually it runs any platform where Node.js runs.
+
+Requirements
+============
+
+You just need to have Node.js installed on your computer.
+You can download Node.js here:
+http://nodejs.org/
 
 How to get started?
 ==================
 
-Getting Started is fairly easy, you just have to add file to your project, that contains the relative paths of all your source files, they must be seperated by newlines.This file is your project definition file. Than copy the single-c-file.js file from this repository to them same folder. Once you have done that, just execute the following command:
+Getting Started is fairly easy, you just have to add file to your project, that contains the relative paths of all your source files, they must be seperated by newlines. This file is your project definition file. Than copy the single-c-file.js file from this repository to them same folder. Once you have done that, just execute the following command:
 
 <pre><code>
 node single-c-file.js project_definiton_filename
